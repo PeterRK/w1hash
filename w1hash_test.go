@@ -3,11 +3,28 @@
 package w1hash
 
 import (
+	"fmt"
 	"math/rand"
 	"testing"
 
 	"github.com/peterrk/w1hash/internal/cgotest"
 )
+
+func hashWithSeedN(key []byte, seed uint64, n int) uint64 {
+	var acc uint64
+	for i := 0; i < n; i++ {
+		acc ^= HashWithSeed(key, seed)
+	}
+	return acc
+}
+
+func hash64N(x uint64, n int) uint64 {
+	var acc uint64
+	for i := 0; i < n; i++ {
+		acc ^= Hash64(x)
+	}
+	return acc
+}
 
 func TestHashMatchesC(t *testing.T) {
 	seeds := []uint64{
@@ -66,5 +83,28 @@ func TestHash64MatchesC(t *testing.T) {
 		if got != want {
 			t.Fatalf("value=%#x got=%#x want=%#x", v, got, want)
 		}
+	}
+}
+
+func BenchmarkHash(b *testing.B) {
+	seed := uint64(0x123456789abcdef0)
+	rng := rand.New(rand.NewSource(3))
+	for size := 0; size <= 32; size++ {
+		buf := make([]byte, size)
+		if _, err := rng.Read(buf); err != nil {
+			b.Fatalf("rand.Read: %v", err)
+		}
+
+		b.Run(fmt.Sprintf("go/%dB", size), func(b *testing.B) {
+			b.SetBytes(int64(size))
+			b.ResetTimer()
+			_ = hashWithSeedN(buf, seed, b.N)
+		})
+
+		b.Run(fmt.Sprintf("c/%dB", size), func(b *testing.B) {
+			b.SetBytes(int64(size))
+			b.ResetTimer()
+			_ = cgotest.HashWithSeedN(buf, seed, b.N)
+		})
 	}
 }
