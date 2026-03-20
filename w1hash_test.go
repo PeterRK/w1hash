@@ -49,6 +49,18 @@ func TestHashMatchesC(t *testing.T) {
 	}
 }
 
+func TestSmall(t *testing.T) {
+	raw := []byte("0123456789abcdefghijklmnopqrstuvwxyz")
+	for i := 0; i < len(raw); i++ {
+		key := raw[:i]
+		a := cgotest.HashWithSeed(key, 0)
+		b := Hash(key)
+		if a != b {
+			t.Fail()
+		}
+	}
+}
+
 func TestHashRandomMatchesC(t *testing.T) {
 	rng := rand.New(rand.NewSource(1))
 	for i := 0; i < 2000; i++ {

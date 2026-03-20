@@ -1,9 +1,8 @@
-//go:build !amd64 || purego
+//go:build !amd64
 
 package w1hash
 
 import "math/bits"
-
 
 const (
 	seed0 = 0x2d358dccaa6c78a5
@@ -64,7 +63,6 @@ func read8(p []byte) uint64 {
 	return read4(p) |
 		read4(p[4:])<<32
 }
-
 
 func HashWithSeed(key []byte, seed uint64) uint64 {
 	length := len(key)
@@ -152,11 +150,11 @@ func HashWithSeed(key []byte, seed uint64) uint64 {
 	}
 }
 
-func hash(key []byte) uint64 {
+func Hash(key []byte) uint64 {
 	return HashWithSeed(key, 0)
 }
 
-func hash64(x uint64) uint64 {
+func Hash64(x uint64) uint64 {
 	const (
 		s0 = 0x2d358dccaa6c78ad
 		s1 = seed1
@@ -165,13 +163,3 @@ func hash64(x uint64) uint64 {
 	t := mul128(x^s1, k)
 	return mix(t.lo^s0, t.hi^s1)
 }
-
-func Hash(key []byte) uint64 {
-	return hash(key)
-}
-
-func Hash64(x uint64) uint64 {
-	return hash64(x)
-}
-
-

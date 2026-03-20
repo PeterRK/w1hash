@@ -2,17 +2,6 @@
 
 // Derived from clang -O3 codegen for stub.c on amd64 and translated to Go's Plan 9 assembler.
 
-TEXT ·Hash(SB), NOSPLIT, $32-32
-	MOVQ key_base+0(FP), AX
-	MOVQ AX, 0(SP)
-	MOVQ key_len+8(FP), AX
-	MOVQ AX, 8(SP)
-	MOVQ $0, 16(SP)
-	CALL ·HashWithSeed(SB)
-	MOVQ 24(SP), AX
-	MOVQ AX, ret+24(FP)
-	RET
-
 TEXT ·Hash64(SB), NOSPLIT, $0-16
 	MOVQ x+0(FP), AX
 	MOVQ $0x8bb84b93962eacc9, CX
