@@ -79,7 +79,6 @@ static inline _w1u128 _w1mum(uint64_t a, uint64_t b) {
 	b = (uint32_t)b;
 	uint64_t c = ax * b;
 	uint64_t d = a * bx;
-	_w1u128 x;
 	x.a = a * b;
 	x.b = ax * bx;
 	uint64_t e = (x.a>>32) + (uint32_t)c + (uint32_t)d;
